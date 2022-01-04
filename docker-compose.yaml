@@ -1,3 +1,5 @@
+# ATTENTION : Changer les mots de passes par défaut pour plus de sécurité.
+
 version: "3"
 services:
   maconso:
@@ -8,11 +10,11 @@ services:
     volumes:
       - ./secrets:/usr/src/app/secrets
     environment:
-      - INFLUXDB_TOKEN=HUYGFgfTYGHCGFdgFCXGcghDHGvfyuJVhjJHcY-ECUSSrArUXeNP_d9NFkpC-GIj0kx7fsOWt4FRaGZ3r4ZHcNw==
+      - INFLUXDB_TOKEN=HUYGFgfTYGHCGFdgFCXGcghDHGvfyuJVhjJHcY-ECUSSrArUXeNP_d9NFkpC-GIj0kx7fsOWt4FRaGZ3r4ZHcNw== # A changer
       - INFLUXDB_URL=http://database:8086
       - INFLUXDB_ORG=maconso
       - INFLUXDB_BUCKET=maconso
-      - FIRST_RUN_START_DATE=2021-01-01
+      - FIRST_RUN_AGE=63072000 # Pour le premier lancement, âge maximum des relevés (défaut: 2ans)
       - LINKY_WITH_LOADCURVE=true
     networks:
       - maconso
@@ -31,10 +33,10 @@ services:
     environment:
     - DOCKER_INFLUXDB_INIT_MODE=setup
     - DOCKER_INFLUXDB_INIT_USERNAME=maconso
-    - DOCKER_INFLUXDB_INIT_PASSWORD=psdfjehwfpo52dfg
+    - DOCKER_INFLUXDB_INIT_PASSWORD=psdfjehwfpo52dfg # A changer
     - DOCKER_INFLUXDB_INIT_ORG=maconso
     - DOCKER_INFLUXDB_INIT_BUCKET=maconso
-    - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=HUYGFgfTYGHCGFdgFCXGcghDHGvfyuJVhjJHcY-ECUSSrArUXeNP_d9NFkpC-GIj0kx7fsOWt4FRaGZ3r4ZHcNw==
+    - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=HUYGFgfTYGHCGFdgFCXGcghDHGvfyuJVhjJHcY-ECUSSrArUXeNP_d9NFkpC-GIj0kx7fsOWt4FRaGZ3r4ZHcNw== # A changer
   grafana:
     image: grafana/grafana
     depends_on:
@@ -43,5 +45,7 @@ services:
       - "3000:3000"
     networks:
       maconso:
+    volumes:
+      - ./provisioning:/etc/grafana/provisioning
 networks:
   maconso:

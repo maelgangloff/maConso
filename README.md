@@ -1,24 +1,23 @@
-# Tableau de bord consommation
+# Tableau de suivi de la consommation énergétique
+
+![Tableau de bord par défaut](docs/defaultDashboard.png)
 
 ## Installation
 
 1. Installer Docker
-1. [Obtenir des jetons d'accès ENEDIS](https://conso.vercel.app/)
-1. Copier le fichier `maConso/secrets/secrets.json` vers `secrets/secrets/json`
-1. Editer `secrets/secrets.json` avec vos identifiants ENEDIS et/ou GRDF
-1. `docker compose up --build -d`
-1. Se rendre sur l'interface Grafana http://localhost:3000/, les identifiants par défauts sont admin/admin
-1. Ajouter une source de données InfluxDB avec les paramètres suivants:
-    - Query Language: **Flux**
-    - URL: **http://database:8086**
-    - Organization: **maconso**
-    - Token: *Le token contenu dans `docker-compose.yaml`*
-    - Default Bucket: **maconso**
-1. Créer votre tableau de bord sur Grafana
+2. [Obtenir des jetons d'accès ENEDIS](https://conso.vercel.app/)
+3. Copier le fichier `maConso/secrets/secrets.json` vers `secrets/secrets/json`
+4. Editer `secrets/secrets.json` avec vos identifiants ENEDIS et/ou GRDF
+5. Lancer la commande `docker compose up --build -d`
+6. Se rendre sur l'interface Grafana http://localhost:3000/, les identifiants par défauts sont admin/admin
 
-## Exemples de requêtes
+Un tableau de bord préconfiguré est déjà disponible, mais vous pouvez en créer un autre à partir des données collectées dans la base de données.
 
-### Consommation électricité (kWh)
+
+### Exemples de requêtes
+
+#### Consommation électricité (kWh)
+
 ```SQL
 from(bucket: "maconso")
   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
@@ -26,15 +25,17 @@ from(bucket: "maconso")
   |> filter(fn: (r) => r["_field"] == "kWh")
 ```
 
-### Puissance apparente maximale (kVA)
+#### Puissance apparente maximale (kVA)
+
 ```SQL
 from(bucket: "maconso")
   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
   |> filter(fn: (r) => r["_measurement"] == "ENEDIS__PMAX_SOUTIRAGE")
-  |> filter(fn: (r) => r["_field"] == "VA")
+  |> filter(fn: (r) => r["_field"] == "kVA")
 ```
 
-### Courbe de charge électricité
+#### Courbe de charge électricité
+
 ```SQL
 from(bucket: "maconso")
   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
@@ -42,7 +43,8 @@ from(bucket: "maconso")
   |> filter(fn: (r) => r["_field"] == "kWh")
 ```
 
-### Consommation gaz (kWh)
+#### Consommation gaz (kWh)
+
 ```SQL
 from(bucket: "maconso")
   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
@@ -50,7 +52,8 @@ from(bucket: "maconso")
   |> filter(fn: (r) => r["_field"] == "kWh")
 ```
 
-### Consommation gaz (m3)
+#### Consommation gaz (m3)
+
 ```SQL
 from(bucket: "maconso")
   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)

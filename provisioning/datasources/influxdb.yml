@@ -1,0 +1,15 @@
+apiVersion: 1
+datasources:
+  - name: influxdb
+    uid: 3vFuDP0nz
+    type: influxdb
+    access: proxy
+    url: http://database:8086
+    secureJsonData:
+      token: HUYGFgfTYGHCGFdgFCXGcghDHGvfyuJVhjJHcY-ECUSSrArUXeNP_d9NFkpC-GIj0kx7fsOWt4FRaGZ3r4ZHcNw== # A changer
+    jsonData:
+      version: Flux
+      organization: maconso
+      defaultBucket: maconso
+      tlsSkipVerify: true
+
