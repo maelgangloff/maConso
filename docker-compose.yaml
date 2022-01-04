@@ -1,0 +1,47 @@
+version: "3"
+services:
+  maconso:
+    build: maConso
+    depends_on:
+      - database
+    restart: always
+    volumes:
+      - ./secrets:/usr/src/app/secrets
+    environment:
+      - INFLUXDB_TOKEN=HUYGFgfTYGHCGFdgFCXGcghDHGvfyuJVhjJHcY-ECUSSrArUXeNP_d9NFkpC-GIj0kx7fsOWt4FRaGZ3r4ZHcNw==
+      - INFLUXDB_URL=http://database:8086
+      - INFLUXDB_ORG=maconso
+      - INFLUXDB_BUCKET=maconso
+      - FIRST_RUN_START_DATE=2021-01-01
+      - LINKY_WITH_LOADCURVE=true
+    networks:
+      - maconso
+  database:
+    restart: always
+    image: influxdb:latest
+    volumes:
+      - ./influxdb/data:/var/lib/influxdb2
+      - ./influxdb/config:/etc/influxdb2
+    expose:
+      - 8086
+    ports:
+      - "8086:8086"
+    networks:
+      - maconso
+    environment:
+    - DOCKER_INFLUXDB_INIT_MODE=setup
+    - DOCKER_INFLUXDB_INIT_USERNAME=maconso
+    - DOCKER_INFLUXDB_INIT_PASSWORD=psdfjehwfpo52dfg
+    - DOCKER_INFLUXDB_INIT_ORG=maconso
+    - DOCKER_INFLUXDB_INIT_BUCKET=maconso
+    - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=HUYGFgfTYGHCGFdgFCXGcghDHGvfyuJVhjJHcY-ECUSSrArUXeNP_d9NFkpC-GIj0kx7fsOWt4FRaGZ3r4ZHcNw==
+  grafana:
+    image: grafana/grafana
+    depends_on:
+      - database
+    ports:
+      - "3000:3000"
+    networks:
+      maconso:
+networks:
+  maconso:
