@@ -46,12 +46,25 @@ async function getLinkyPoints({accessToken, refreshToken, PRM}: LinkySecret, sta
                 .tag('PRM', PRM)
         )
     ]
-    if (withLoadCurve) points.push(...(await session.getLoadCurve(dateToString(new Date(Date.now() - 7 * 24 * 60 * 60e3)), end)).data.map(step =>
-        new Point('ENEDIS__CDC_SOUTIRAGE')
-            .floatField('kWh', step.value / 1e3)
-            .timestamp(new Date(step.date))
-            .tag('PRM', PRM)
-    ))
+    if (withLoadCurve) {
+        const period = 7 * 24 * 60 * 60e3
+        for (let startCDCTime = new Date(start).getTime(); startCDCTime < new Date(end).getTime(); startCDCTime += period) {
+            const startCDC = dateToString(new Date(startCDCTime))
+            const endCDC = new Date(startCDCTime).getTime() + period > new Date(end).getTime() ? end : dateToString(new Date(new Date(startCDCTime).getTime() + period))
+            console.log(`LOG(${PRM}): CDC PERIOD: ${startCDC} -> ${endCDC}`)
+            try {
+                points.push(...(await session.getLoadCurve(startCDC, endCDC)).data.map(step =>
+                    new Point('ENEDIS__CDC_SOUTIRAGE')
+                        .floatField('kWh', step.value / 1e3)
+                        .timestamp(new Date(step.date))
+                        .tag('PRM', PRM)
+                ))
+            } catch (e) {
+                console.log(`ERREUR(${PRM}): Impossible de récupérer la courbe de charge pour la période ${startCDC} -> ${endCDC}.`)
+            }
+        }
+
+    }
     return points
 }
 
@@ -65,9 +78,7 @@ async function getGRDFPoints({username, password, PCE}: GRDFSecret, start: strin
             .tag('PCE', PCE))
 }
 
-let firstRun = true
-
-async function fetchData() {
+async function fetchData(firstRun: boolean = false) {
     const writeApi = new InfluxDB({
         url: INFLUXDB_URL,
         token: INFLUXDB_TOKEN
@@ -93,9 +104,8 @@ async function fetchData() {
     }
     await writeApi.close()
     console.log("SUCCES: Base de données mise à jour.")
-    if (firstRun) firstRun = false
 }
 
-fetchData()
+fetchData(true)
 
-new CronJob('0 1 * * *', fetchData).start()
+new CronJob('0 8 * * *', fetchData).start()

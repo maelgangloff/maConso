@@ -60,3 +60,15 @@ from(bucket: "maconso")
   |> filter(fn: (r) => r["_measurement"] == "GRDF__CONSOMMATION")
   |> filter(fn: (r) => r["_field"] == "m3")
 ```
+
+#### Filtrer par compteur
+
+Les enregistrements incluent un tag contenant le numéro du compteur (PRM pour Linky et PCE pour Gazpar), ainsi si vous possédez un accès à plusieurs compteurs, vous pouvez filtrer les données pour ne sélectionner qu'un compteur:
+
+```SQL
+from(bucket: "maconso")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "ENEDIS__ENERGIE_SOUTIRAGE")
+  |> filter(fn: (r) => r["PRM"] == "06587593521409")
+  |> filter(fn: (r) => r["_field"] == "kWh")
+```
