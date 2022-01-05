@@ -415,6 +415,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -492,7 +496,9 @@
           "refId": "A"
         }
       ],
-      "title": "Courbe de charge électricité",
+      "timeFrom": "now-3d",
+      "timeShift": "1d",
+      "title": "Courbe de charge électricité trois derniers jours",
       "type": "timeseries"
     },
     {
@@ -683,6 +689,6 @@
   "timezone": "",
   "title": "Consommation énergie",
   "uid": "yQ4_KE0nz",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }
