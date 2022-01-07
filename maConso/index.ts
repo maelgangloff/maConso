@@ -54,7 +54,7 @@ async function getLinkyPoints({accessToken, refreshToken, PRM, isLoadCurve}: Lin
             try {
                 points.push(...(await session.getLoadCurve(startCDC, endCDC)).data.map(step =>
                     new Point('ENEDIS__CDC_SOUTIRAGE')
-                        .floatField('kWh', step.value / 1e3)
+                        .floatField('kW', step.value / 1e3)
                         .timestamp(new Date(step.date))
                         .tag('PRM', PRM)
                 ))
