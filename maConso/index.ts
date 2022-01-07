@@ -10,23 +10,22 @@ const {
     INFLUXDB_URL,
     INFLUXDB_ORG,
     INFLUXDB_BUCKET,
-    FIRST_RUN_AGE,
-    LINKY_WITH_LOADCURVE
+    FIRST_RUN_AGE
 } = process.env
 
-type LinkySecret = { accessToken: string, refreshToken: string, PRM: string }
+type LinkySecret = { accessToken: string, refreshToken: string, PRM: string, isLoadCurve: boolean }
 type GRDFSecret = { username: string, password: string, PCE: string }
 
 const dateToString = (date: Date = new Date()) => date.toISOString().split('T')[0]
 
-async function getLinkyPoints({accessToken, refreshToken, PRM}: LinkySecret, start: string, withLoadCurve: boolean) {
+async function getLinkyPoints({accessToken, refreshToken, PRM, isLoadCurve}: LinkySecret, start: string) {
     const session = new LinkySession({
         accessToken,
         refreshToken,
         usagePointId: PRM,
         onTokenRefresh: (newAT, newRT) => {
             const newLinkySecrets = linkySecrets.filter(s => s.PRM !== PRM)
-            if (newAT !== '' && newRT !== '') newLinkySecrets.push({accessToken: newAT, refreshToken: newRT, PRM})
+            if (newAT !== '' && newRT !== '') newLinkySecrets.push({accessToken: newAT, refreshToken: newRT, PRM, isLoadCurve})
             writeFileSync('./secrets/secrets.json', JSON.stringify({gazpar: grdfSecrets, linky: newLinkySecrets}))
         }
     })
@@ -46,7 +45,7 @@ async function getLinkyPoints({accessToken, refreshToken, PRM}: LinkySecret, sta
                 .tag('PRM', PRM)
         )
     ]
-    if (withLoadCurve) {
+    if (isLoadCurve) {
         const period = 7 * 24 * 60 * 60e3
         for (let startCDCTime = new Date(start).getTime(); startCDCTime < new Date(end).getTime(); startCDCTime += period) {
             const startCDC = dateToString(new Date(startCDCTime))
@@ -87,7 +86,7 @@ async function fetchData(firstRun: boolean = false) {
     const start = firstRun ? dateToString(new Date(Date.now() - parseInt(FIRST_RUN_AGE ?? '63072000') * 1e3)) : dateToString(new Date(Date.now() - 7 * 24 * 60 * 60e3))
     for (const linkySecret of linkySecrets) {
         try {
-            writeApi.writePoints(await getLinkyPoints(linkySecret, start, LINKY_WITH_LOADCURVE === 'true'))
+            writeApi.writePoints(await getLinkyPoints(linkySecret, start))
             console.log(`SUCCES(${linkySecret.PRM}): Relevés d'électricité obtenus.`)
         } catch (e) {
             console.log(`ERREUR(${linkySecret.PRM}): Impossible d'obtenir les données d'électricité.`)

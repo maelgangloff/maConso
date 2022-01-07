@@ -15,7 +15,6 @@ services:
       - INFLUXDB_ORG=maconso
       - INFLUXDB_BUCKET=maconso
       - FIRST_RUN_AGE=63072000 # Pour le premier lancement, âge maximum des relevés (défaut: 2ans)
-      - LINKY_WITH_LOADCURVE=true
     networks:
       - maconso
   database:
