@@ -6,7 +6,7 @@
 
 1. Installer Docker
 2. [Obtenir des jetons d'accès ENEDIS](https://conso.vercel.app/)
-3. Copier le fichier `maConso/secrets/secrets.json` vers `secrets/secrets/json`
+3. Copier le fichier `maConso/secrets/secrets.json` vers `secrets/secrets.json`
 4. Editer `secrets/secrets.json` avec vos identifiants ENEDIS et/ou GRDF
 5. Lancer la commande `docker compose up --build -d`
 6. Se rendre sur l'interface Grafana http://localhost:3000/, les identifiants par défauts sont admin/admin
