@@ -1,4 +1,4 @@
-# ATTENTION : Changer les mots de passes par défaut pour plus de sécurité.
+# ATTENTION : Changer les mots de passes par défaut avant toute utilisation !
 
 version: "3"
 services:
