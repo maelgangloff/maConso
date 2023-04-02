@@ -1,10 +1,10 @@
 {
   "dependencies": {
-    "@influxdata/influxdb-client": "^1.21.0",
-    "cron": "^1.8.2",
-    "dotenv": "^10.0.0",
-    "grdf-api": "^0.0.4",
-    "linky": "^1.3.0"
+    "@influxdata/influxdb-client": "^1.33.2",
+    "cron": "^2.3.0",
+    "dotenv": "^16.0.3",
+    "grdf-api": "^0.1.1",
+    "linky": "^1.7.0"
   },
   "devDependencies": {
     "@types/cron": "^1.7.3",

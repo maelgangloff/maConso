@@ -92,6 +92,8 @@ async function fetchData(firstRun: boolean = false) {
             console.log(`ERREUR(${linkySecret.PRM}): Impossible d'obtenir les données d'électricité.`)
         }
     }
+    /*
+    // EDIT: GRDF impose la résolution d'un captcha avant l'accès à son API. Il n'est plus possible de récupérer automatiquement ses relevés...
     for (const grdfSecret of grdfSecrets) {
         try {
             writeApi.writePoints(await getGRDFPoints(grdfSecret, start))
@@ -101,6 +103,7 @@ async function fetchData(firstRun: boolean = false) {
             console.log(`ERREUR(${grdfSecret.PCE}): Impossible d'obtenir les données de gaz.`)
         }
     }
+    */
     await writeApi.close()
     console.log("SUCCES: Base de données mise à jour.")
 }

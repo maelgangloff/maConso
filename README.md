@@ -1,15 +1,26 @@
-# Tableau de suivi de la consommation énergétique
+# Suivi de la consommation énergétique d'une habitation
 
 ![Tableau de bord par défaut](docs/defaultDashboard.png)
+
+Ce projet permet de visualiser la consommation énergétique (électricité ~~et gaz~~) d'une habitation.
 
 ## Installation
 
 1. Installer Docker
 2. [Obtenir des jetons d'accès ENEDIS](https://conso.vercel.app/)
 3. Copier le fichier `maConso/secrets/secrets.json` vers `secrets/secrets.json`
-4. Editer `secrets/secrets.json` avec vos identifiants ENEDIS et/ou GRDF
-5. Lancer la commande `docker compose up --build -d`
-6. Se rendre sur l'interface Grafana http://localhost:3000/, les identifiants par défauts sont admin/admin
+```shell
+cp maConso/secrets/secrets.json secrets/secrets.json
+```
+4. Editer `secrets/secrets.json` avec vos identifiants ENEDIS ~~et/ou GRDF~~
+```shell
+nano secrets/secrets.json
+```
+5. Lancer les conteneurs
+```shell
+docker compose up --build -d
+```
+6. Se rendre sur l'interface Grafana http://localhost:3000/, les identifiants par défauts sont admin/admin. Il vous sera normalement demandé de définir un nouveau mot de passe. 
 
 Un tableau de bord préconfiguré est déjà disponible, mais vous pouvez en créer un autre à partir des données collectées dans la base de données.
 
