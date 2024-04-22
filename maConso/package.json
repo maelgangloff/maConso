@@ -3,7 +3,7 @@
     "@influxdata/influxdb-client": "^1.33.2",
     "cron": "^2.3.0",
     "dotenv": "^16.0.3",
-    "grdf-api": "^0.1.1",
+    "grdf-api": "^0.2.0",
     "linky": "^1.7.0"
   },
   "devDependencies": {
