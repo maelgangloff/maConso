@@ -1,6 +1,11 @@
 {
     "compilerOptions": {
+        "target": "esnext",
+        "strict": true,
+        "moduleResolution": "NodeNext",
+        "module": "NodeNext",
         "esModuleInterop": true,
+        "skipLibCheck": true,
         "resolveJsonModule": true
     }
 }

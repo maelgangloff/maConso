@@ -10,11 +10,12 @@ services:
     volumes:
       - ./secrets:/usr/src/app/secrets
     environment:
-      - INFLUXDB_TOKEN=HUYGFgfTYGHCGFdgFCXGcghDHGvfyuJVhjJHcY-ECUSSrArUXeNP_d9NFkpC-GIj0kx7fsOWt4FRaGZ3r4ZHcNw== # A changer
       - INFLUXDB_URL=http://database:8086
       - INFLUXDB_ORG=maconso
       - INFLUXDB_BUCKET=maconso
       - FIRST_RUN_AGE=63072000 # Pour le premier lancement, âge maximum des relevés (défaut: 2ans)
+    env_file:
+    - .maConso.env
     networks:
       - maconso
   database:

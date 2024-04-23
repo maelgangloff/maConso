@@ -1,16 +1,19 @@
 {
+  "type": "module",
   "dependencies": {
     "@influxdata/influxdb-client": "^1.33.2",
-    "cron": "^2.3.0",
     "dotenv": "^16.0.3",
     "grdf-api": "^0.2.0",
-    "linky": "^1.7.0"
+    "linky": "^2.0.2"
   },
   "devDependencies": {
     "@types/cron": "^1.7.3",
+    "eslint": "^8.38.0",
+    "ts-standard": "^12.0.2",
     "typescript": "^4.5.4"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint index.ts"
   }
 }
