@@ -23,6 +23,12 @@ interface GRDFSecret { username: string, password: string, PCE: string }
 
 const dateToString = (date: Date = new Date()): string => date.toISOString().split('T')[0]
 
+/**
+ * Récupérer la liste des points de mesure d'électricité à renvoyer vers InfluxDB.
+ * @param {LinkySecret} linkySecret Authentification de l'utilisateur ENEDIS
+ * @param {string} start Date de début de la relève au format YYYY-MM-DD
+ * @returns {Promise<Point>} La liste des points de mesure
+ */
 async function getLinkyPoints ({ token, PRM, isProduction, isLoadCurve, isProductionLoadCurve }: LinkySecret, start: string): Promise<Point[]> {
   const session = new LinkySession(token, PRM)
 
@@ -80,6 +86,12 @@ async function getLinkyPoints ({ token, PRM, isProduction, isLoadCurve, isProduc
   return points
 }
 
+/**
+ * Récupérer la liste des points de mesure de gaz à renvoyer vers InfluxDB.
+ * @param {GRDFSecret} grdfSecret Authentification de l'utilisateur GRDF
+ * @param start Date de début de la relève au format YYYY-MM-DD
+ * @returns {Promise<Point>} La liste des points de mesure
+ */
 async function getGRDFPoints ({ username, password, PCE }: GRDFSecret, start: string): Promise<Point[]> {
   const user = new GRDF(await GRDF.login(username, password))
   return (await user.getPCEConsumption(ConsommationType.informatives, [PCE], start, dateToString()))[PCE].releves.filter(r => r.energieConsomme !== null).map(r =>
@@ -90,6 +102,11 @@ async function getGRDFPoints ({ username, password, PCE }: GRDFSecret, start: st
       .tag('PCE', PCE))
 }
 
+/**
+ * Récupérer les données de consommation (et de production) de ENEDIS et GRDF.
+ * Les points de mesure sont envoyées à une base de données InfluxDB.
+ * @param {boolean} firstRun Le script itère les requêtes jusqu'à arriver à la date FIRST_RUN_AGE
+ */
 async function fetchData (firstRun: boolean = false): Promise<void> {
   if
   (DOCKER_INFLUXDB_INIT_ADMIN_TOKEN === undefined ||
@@ -135,8 +152,8 @@ async function fetchData (firstRun: boolean = false): Promise<void> {
   console.log('SUCCES: Base de données mise à jour.')
 }
 
-fetchData(true).catch(console.error)
+fetchData(true).catch(e => { throw e }) // Récupérer les données depuis la date FIRST_RUN_AGE
 
 setInterval(() => {
-  fetchData().catch(console.error)
+  fetchData().catch(e => { throw e }) // Récupérer les données des 7 derniers jours
 }, 24 * 60 * 60 * 1e3)
