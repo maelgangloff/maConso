@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+title: maConso
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Maël
+    family-names: Gangloff
+    email: contact@maelgangloff.fr
+    orcid: 'https://orcid.org/0000-0002-7729-724X'
+identifiers:
+  - type: url
+    value: >-
+      https://github.com/maelgangloff/maConso/releases/tag/v0.1.0
+    description: Release v0.1.0 of maConso
+repository-code: 'https://github.com/maelgangloff/maConso'
+abstract: Tableau de bord de la consommation d'énergie des compteurs connectés 
+keywords:
+  - Linky
+  - Gazpar
+  - GRDF
+  - ENEDIS
+  - API
+  - Gaz
+  - Electricité
+license: GPL-3.0-or-later
+version: 0.1.0
+date-released: '2024-04-23'
+license-url: 'https://github.com/maelgangloff/maConso/blob/master/LICENSE'
