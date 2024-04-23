@@ -3,7 +3,7 @@ import { Session as LinkySession } from 'linky'
 import { ConsommationType, GRDF } from 'grdf-api'
 
 const {
-  INFLUXDB_TOKEN,
+  DOCKER_INFLUXDB_INIT_ADMIN_TOKEN,
   INFLUXDB_URL,
   INFLUXDB_ORG,
   INFLUXDB_BUCKET,
@@ -92,7 +92,7 @@ async function getGRDFPoints ({ username, password, PCE }: GRDFSecret, start: st
 
 async function fetchData (firstRun: boolean = false): Promise<void> {
   if
-  (INFLUXDB_TOKEN === undefined ||
+  (DOCKER_INFLUXDB_INIT_ADMIN_TOKEN === undefined ||
     INFLUXDB_URL === undefined ||
     INFLUXDB_ORG === undefined ||
     INFLUXDB_BUCKET === undefined ||
@@ -119,7 +119,7 @@ async function fetchData (firstRun: boolean = false): Promise<void> {
 
   const writeApi = new InfluxDB({
     url: INFLUXDB_URL,
-    token: INFLUXDB_TOKEN
+    token: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
   }).getWriteApi(INFLUXDB_ORG, INFLUXDB_BUCKET)
 
   const start = firstRun ? dateToString(new Date(Date.now() - parseInt(FIRST_RUN_AGE ?? '63072000') * 1e3)) : dateToString(new Date(Date.now() - 7 * 24 * 60 * 60e3))

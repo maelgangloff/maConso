@@ -13,7 +13,6 @@ services:
       - INFLUXDB_URL=http://database:8086
       - INFLUXDB_ORG=maconso
       - INFLUXDB_BUCKET=maconso
-      - FIRST_RUN_AGE=63072000 # Pour le premier lancement, âge maximum des relevés (défaut: 2ans)
     env_file:
     - .maConso.env
     networks:
@@ -33,10 +32,10 @@ services:
     environment:
     - DOCKER_INFLUXDB_INIT_MODE=setup
     - DOCKER_INFLUXDB_INIT_USERNAME=maconso
-    - DOCKER_INFLUXDB_INIT_PASSWORD=psdfjehwfpo52dfg # A changer
     - DOCKER_INFLUXDB_INIT_ORG=maconso
     - DOCKER_INFLUXDB_INIT_BUCKET=maconso
-    - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=HUYGFgfTYGHCGFdgFCXGcghDHGvfyuJVhjJHcY-ECUSSrArUXeNP_d9NFkpC-GIj0kx7fsOWt4FRaGZ3r4ZHcNw== # A changer
+    env_file:
+    - .maConso.env
   grafana:
     image: grafana/grafana
     depends_on:
