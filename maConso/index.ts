@@ -124,22 +124,12 @@ async function fetchData (firstRun: boolean = false): Promise<void> {
 
   const start = firstRun ? dateToString(new Date(Date.now() - parseInt(FIRST_RUN_AGE ?? '63072000') * 1e3)) : dateToString(new Date(Date.now() - 7 * 24 * 60 * 60e3))
   for (const linkySecret of linkySecrets) {
-    try {
-      writeApi.writePoints(await getLinkyPoints(linkySecret, start))
-      console.log(`SUCCES(${linkySecret.PRM}): Relevés d'électricité obtenus.`)
-    } catch (e) {
-      console.error(`ERREUR(${linkySecret.PRM}): Impossible d'obtenir les données d'électricité.`)
-      console.error(e)
-    }
+    writeApi.writePoints(await getLinkyPoints(linkySecret, start))
+    console.log(`SUCCES(${linkySecret.PRM}): Relevés d'électricité récupérés du ${start} à aujourd'hui.`)
   }
   for (const grdfSecret of grdfSecrets) {
-    try {
-      writeApi.writePoints(await getGRDFPoints(grdfSecret, start))
-      console.log(`SUCCES(${grdfSecret.PCE}): Relevés de gaz obtenus.`)
-    } catch (e) {
-      console.error(`ERREUR(${grdfSecret.PCE}): Impossible d'obtenir les données de gaz.`)
-      console.error(e)
-    }
+    writeApi.writePoints(await getGRDFPoints(grdfSecret, start))
+    console.log(`SUCCES(${grdfSecret.PCE}): Relevés de gaz récupérés du ${start} à aujourd'hui.`)
   }
   await writeApi.close()
   console.log('SUCCES: Base de données mise à jour.')
