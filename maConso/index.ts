@@ -4,9 +4,9 @@ import { ConsommationType, GRDF } from 'grdf-api'
 
 const {
   DOCKER_INFLUXDB_INIT_ADMIN_TOKEN,
-  INFLUXDB_URL,
-  INFLUXDB_ORG,
-  INFLUXDB_BUCKET,
+  DOCKER_INFLUXDB_URL,
+  DOCKER_INFLUXDB_ORG,
+  DOCKER_INFLUXDB_BUCKET,
   FIRST_RUN_AGE,
   LINKY_TOKEN,
   LINKY_PRM,
@@ -97,9 +97,11 @@ async function getGRDFPoints ({ username, password, PCE }: GRDFSecret, start: st
   return (await user.getPCEConsumption(ConsommationType.informatives, [PCE], start, dateToString()))[PCE].releves.filter(r => r.energieConsomme !== null).map(r =>
     new Point('GRDF__CONSOMMATION')
       .floatField('kWh', r.energieConsomme)
-      .floatField('m3', Math.round(r.energieConsomme / r.coeffConversion * 100) / 100)
+      .floatField('m3', r.volumeBrutConsomme)
+      .floatField('kWh/m3', r.coeffConversion)
       .timestamp(new Date(r.journeeGaziere as string))
-      .tag('PCE', PCE))
+      .tag('PCE', PCE)
+  )
 }
 
 /**
@@ -110,9 +112,9 @@ async function getGRDFPoints ({ username, password, PCE }: GRDFSecret, start: st
 async function fetchData (firstRun: boolean = false): Promise<void> {
   if
   (DOCKER_INFLUXDB_INIT_ADMIN_TOKEN === undefined ||
-    INFLUXDB_URL === undefined ||
-    INFLUXDB_ORG === undefined ||
-    INFLUXDB_BUCKET === undefined ||
+    DOCKER_INFLUXDB_URL === undefined ||
+    DOCKER_INFLUXDB_ORG === undefined ||
+    DOCKER_INFLUXDB_BUCKET === undefined ||
     FIRST_RUN_AGE === undefined
   ) throw new Error("Les variables d'environnement ne sont pas correctement définies.")
 
@@ -135,9 +137,9 @@ async function fetchData (firstRun: boolean = false): Promise<void> {
   if (linkySecrets.length === 0 && grdfSecrets.length === 0) throw new Error("Impossible de trouver les informations d'authentification.")
 
   const writeApi = new InfluxDB({
-    url: INFLUXDB_URL,
+    url: DOCKER_INFLUXDB_URL,
     token: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
-  }).getWriteApi(INFLUXDB_ORG, INFLUXDB_BUCKET)
+  }).getWriteApi(DOCKER_INFLUXDB_ORG, DOCKER_INFLUXDB_BUCKET)
 
   const start = firstRun ? dateToString(new Date(Date.now() - parseInt(FIRST_RUN_AGE ?? '63072000') * 1e3)) : dateToString(new Date(Date.now() - 7 * 24 * 60 * 60e3))
   for (const linkySecret of linkySecrets) {
