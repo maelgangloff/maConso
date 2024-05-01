@@ -3,10 +3,10 @@ import { Session as LinkySession } from 'linky'
 import { ConsommationType, GRDF } from 'grdf-api'
 
 const {
-  DOCKER_INFLUXDB_INIT_ADMIN_TOKEN,
   DOCKER_INFLUXDB_URL,
-  DOCKER_INFLUXDB_ORG,
-  DOCKER_INFLUXDB_BUCKET,
+  DOCKER_INFLUXDB_INIT_ADMIN_TOKEN,
+  DOCKER_INFLUXDB_INIT_ORG,
+  DOCKER_INFLUXDB_INIT_BUCKET,
   FIRST_RUN_AGE,
   LINKY_TOKEN,
   LINKY_PRM,
@@ -94,13 +94,16 @@ async function getLinkyPoints ({ token, PRM, isProduction, isLoadCurve, isProduc
  */
 async function getGRDFPoints ({ username, password, PCE }: GRDFSecret, start: string): Promise<Point[]> {
   const user = new GRDF(await GRDF.login(username, password))
-  return (await user.getPCEConsumption(ConsommationType.informatives, [PCE], start, dateToString()))[PCE].releves.filter(r => r.energieConsomme !== null).map(r =>
-    new Point('GRDF__CONSOMMATION')
+  return (await user.getPCEConsumption(ConsommationType.informatives, [PCE], start, dateToString()))[PCE].releves.filter(r => r.energieConsomme !== null).map(r => {
+    const point = new Point('GRDF__CONSOMMATION')
       .floatField('kWh', r.energieConsomme)
       .floatField('m3', r.volumeBrutConsomme)
       .floatField('kWh/m3', r.coeffConversion)
       .timestamp(new Date(r.journeeGaziere as string))
       .tag('PCE', PCE)
+
+    return point
+  }
   )
 }
 
@@ -113,8 +116,8 @@ async function fetchData (firstRun: boolean = false): Promise<void> {
   if
   (DOCKER_INFLUXDB_INIT_ADMIN_TOKEN === undefined ||
     DOCKER_INFLUXDB_URL === undefined ||
-    DOCKER_INFLUXDB_ORG === undefined ||
-    DOCKER_INFLUXDB_BUCKET === undefined ||
+    DOCKER_INFLUXDB_INIT_ORG === undefined ||
+    DOCKER_INFLUXDB_INIT_BUCKET === undefined ||
     FIRST_RUN_AGE === undefined
   ) throw new Error("Les variables d'environnement ne sont pas correctement définies.")
 
@@ -139,7 +142,7 @@ async function fetchData (firstRun: boolean = false): Promise<void> {
   const writeApi = new InfluxDB({
     url: DOCKER_INFLUXDB_URL,
     token: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
-  }).getWriteApi(DOCKER_INFLUXDB_ORG, DOCKER_INFLUXDB_BUCKET)
+  }).getWriteApi(DOCKER_INFLUXDB_INIT_ORG, DOCKER_INFLUXDB_INIT_BUCKET)
 
   const start = firstRun ? dateToString(new Date(Date.now() - parseInt(FIRST_RUN_AGE ?? '63072000') * 1e3)) : dateToString(new Date(Date.now() - 7 * 24 * 60 * 60e3))
   for (const linkySecret of linkySecrets) {
